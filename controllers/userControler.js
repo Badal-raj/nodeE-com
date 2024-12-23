@@ -52,7 +52,8 @@ const handleLoginUser = async (req, res) => {
           message: "Invalid credentials! userId or password is not correct.",
         });
       } else {
-        const token = generateToken({ id: all_data[findUserIndex]._id });
+       // logedInUserId(all_data[findUserIndex]._id)
+        const token = generateToken(all_data[findUserIndex]._id);
 
         return res.status(200).json({
           message: "login successfully",

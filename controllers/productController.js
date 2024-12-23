@@ -1,4 +1,5 @@
 const { productModal } = require("../models/product");
+const { logedInUserId } = require("../middlewares/authToken");
 
 const handleAddProduct = async (req, res) => {
   const { name, price, catogry, company, userId } = req.body;
@@ -20,16 +21,24 @@ const handleAddProduct = async (req, res) => {
   }
 };
 
+const getLoggedInUserId = (req) =>{
+  return req.user.id
+}
+
 const handleAllProduct = async (req, res) => {
+  
+ const userId = getLoggedInUserId(req);
+  
   try {
-    const allProduct_list = await productModal.find({});
+    const allProduct_list = await productModal.find({userId});
+    
     if (allProduct_list.length > 0) {
       return res.status(200).json({
         result: allProduct_list,
         message: "all product fetched successfully",
       });
     } else {
-      return res.status(400).json({ message: "No product found" });
+      return res.status(404).json({ message: "No product found for this user" });
     }
   } catch (err) {
     console.error("Error fetching users:", err);
@@ -129,4 +138,5 @@ module.exports = {
   handleGetSingleProductById,
   handleUpdateProductById,
   handleSearchProduct,
+  logedInUserId
 };
