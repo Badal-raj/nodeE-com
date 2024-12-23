@@ -1,5 +1,4 @@
 const { productModal } = require("../models/product");
-const { logedInUserId } = require("../middlewares/authToken");
 
 const handleAddProduct = async (req, res) => {
   const { name, price, catogry, company, userId } = req.body;
@@ -138,5 +137,4 @@ module.exports = {
   handleGetSingleProductById,
   handleUpdateProductById,
   handleSearchProduct,
-  logedInUserId
 };
