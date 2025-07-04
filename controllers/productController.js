@@ -31,13 +31,13 @@ const handleAllProduct = async (req, res) => {
   try {
     const allProduct_list = await productModal.find({userId});
     
-    if (allProduct_list.length > 0) {
+    if (allProduct_list.length >= 0) {
       return res.status(200).json({
         result: allProduct_list,
         message: "all product fetched successfully",
       });
     } else {
-      return res.status(404).json({ message: "No product found for this user" });
+      return res.status(202).json({ message: "No product found for this user" });
     }
   } catch (err) {
     console.error("Error fetching users:", err);
