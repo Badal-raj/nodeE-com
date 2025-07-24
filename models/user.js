@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 //***************create user schema for registration*************************//
 const userScemna = new mongoose.Schema(
@@ -45,14 +46,17 @@ const userScemna = new mongoose.Schema(
   { timestamps: true }
 );
 
-userScemna.set("toJSON", {
-  // Exclude the password from the response when the user document is converted to JSON
-  transform: (doc, ret) => {
-    delete ret.password; // This removes the password from the returned object
-    return ret;
-  },
+// Encrypt password before saving to the database
+userScemna.pre("save", async function (next) {
+  if (!this.isModified("password")) return next(); // only encrypt if password is modified
+  try {
+    const salt = await bcrypt.genSalt(10); // generate salt
+    this.password = await bcrypt.hash(this.password, salt); // hash password
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
-const userModel = mongoose.model("users", userScemna); //Create user modal
 
 userScemna.set("toJSON", {
   // Exclude the password from the response when the user document is converted to JSON
@@ -61,7 +65,7 @@ userScemna.set("toJSON", {
     return ret;
   },
 });
-//const userLoginModel = mongoose.model("users", userScemna); //Create user modal
+const userModel = mongoose.model("users", userScemna); //Create user modal
 
 module.exports = {
   userModel,

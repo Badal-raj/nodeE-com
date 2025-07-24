@@ -20,16 +20,24 @@ const handleAddProduct = async (req, res) => {
   }
 };
 
+const getLoggedInUserId = (req) =>{
+  return req.user.id
+}
+
 const handleAllProduct = async (req, res) => {
+  
+ const userId = getLoggedInUserId(req);
+  
   try {
-    const allProduct_list = await productModal.find({});
-    if (allProduct_list.length > 0) {
+    const allProduct_list = await productModal.find({userId});
+    
+    if (allProduct_list.length >= 0) {
       return res.status(200).json({
         result: allProduct_list,
         message: "all product fetched successfully",
       });
     } else {
-      return res.status(400).json({ message: "No product found" });
+      return res.status(202).json({ message: "No product found for this user" });
     }
   } catch (err) {
     console.error("Error fetching users:", err);

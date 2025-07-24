@@ -19,11 +19,20 @@ const storage = multer.diskStorage({
   // Create multer instance with storage configuration
   const upload = multer({ storage: storage });
 
-const { handleCreateNewUser, handleLoginUser, handleFileUpload, handlUserDetails } = require("../controllers/userControler");
+const { 
+  handleCreateNewUser, 
+  handleLoginUser, 
+  handleFileUpload, 
+  handlUserDetails,
+  handleSendOpt,
+  handleResetPassword,
+} = require("../controllers/userControler");
 
 router.post("/create", handleCreateNewUser );
 router.post("/login", handleLoginUser);
 router.post("/upload", upload.single('profilePic'), handleFileUpload);
-router.post("/profile", handlUserDetails)
+router.post("/profile", handlUserDetails);
+router.post('/forget-password', handleSendOpt);
+router.post('/reset-password/:id/:token', handleResetPassword)
 
 module.exports = router;

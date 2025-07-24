@@ -1,8 +1,8 @@
 const Jwt = require("jsonwebtoken");
 const JWT_SECRET = "badal_e-comm";
 
-const generateToken = (user_id) => {
-  return Jwt.sign({ user_id }, JWT_SECRET, { expiresIn: "2h" });
+const generateToken = (id) => {
+  return Jwt.sign( {id} , JWT_SECRET, { expiresIn: "2h" });
 };
 
 const veriFyAuthToken = (req, res, next) => {
@@ -16,6 +16,8 @@ const veriFyAuthToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({ message: "Invalid or expired token" });
     }
+    
+    req.user = decoded
     // Attach the decoded user info to the request object
     // req.user = decoded;
     next(); // Token is valid, proceed to the next middleware or route handler
@@ -24,5 +26,5 @@ const veriFyAuthToken = (req, res, next) => {
 
 module.exports = {
   generateToken,
-  veriFyAuthToken
+  veriFyAuthToken,
 };
