@@ -1,5 +1,5 @@
 const Jwt = require("jsonwebtoken");
-const JWT_SECRET = "badal_e-comm";
+const JWT_SECRET = process.env.NODE_API_AUTH_SECRET_KEY;
 
 const generateToken = (id) => {
   return Jwt.sign( {id} , JWT_SECRET, { expiresIn: "2h" });
