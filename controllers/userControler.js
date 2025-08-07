@@ -1,10 +1,12 @@
 const { userModel } = require("../models/user");
 const { generateToken } = require("../middlewares/authToken");
 const bcrypt = require("bcryptjs");
-
 const nodemailer = require('nodemailer')
-
 const Jwt = require("jsonwebtoken"); //will create seprate authtoken for forget password
+
+const ForgotPasswordSecretKey = process.env.NODE_API_FORGOT_SECRET_KEY;
+const USER_MAIL = process.env.NODE_APP_SEND_MAIL
+const USER_PASSWORD = process.env.NODE_APP_PASSWORD
 
 const handleCreateNewUser = async (req, res) => {
   let { userName, email, phoneNo, password } = req.body;
@@ -118,19 +120,19 @@ const handleSendOpt = async (req, res)=>{
   if(!user){
      res.status(400).json({ Message: "User does not exist" });
   }
-  const token =  Jwt.sign( {id: user._id} , 'jwt-secret-token', { expiresIn: "10m" });
+  const token =  Jwt.sign( {id: user._id} , ForgotPasswordSecretKey, { expiresIn: "10m" });
    // Send the token to the user's email
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "harikeshb900@gmail.com",
-        pass: "cduf cueg lvql lyiy",
+        user: USER_MAIL,
+        pass: USER_PASSWORD
       },
     });
 
     // Email configuration
     const mailOptions = {
-      from: "harikeshb900@gmail.com",
+      from: USER_MAIL,
       to: email,
       subject: "Reset Password",
       html: `<h1>Reset Your Password</h1>
@@ -154,9 +156,8 @@ const handleResetPassword = async (req, res)=>{
  const { id, token } = req.params;
   const { password } = req.body;
 
-  Jwt.verify(token, "jwt-secret-token", async (err, decoded) => {
+  Jwt.verify(token, ForgotPasswordSecretKey, async (err, decoded) => {
     if (err) {
-      console.log("JWT Verify Error:", err); // log for debugging
       return res.status(400).json({ Status: "Error with token", error: err.message });
     } else {
       try {
